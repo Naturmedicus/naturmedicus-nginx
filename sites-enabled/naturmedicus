@@ -5,22 +5,44 @@ server {
         index index.php;
 
         # set expiration of assets to MAX for caching
-        location ~* \.(ico|css|js|gif|jpe?g|png)(\?[0-9]+)?$ {
-                expires max;
-                log_not_found off;
-        }
+#        location ~* \.(ico|css|js|gif|jpe?g|png)(\?[0-9]+)?$ {
+#                expires max;
+#                log_not_found off;
+#        }
 
         location / {
                 # Check if a file or directory index file exists, else route it to index.php.
                 try_files $uri $uri/ /index.php;
         }
 
+        location /v2/bundles/ {
+            autoindex off;
+            alias /var/www/html/naturmedicus/web/bundles/;
+        }
+
+        location /build/ {
+            autoindex off;
+            alias /var/www/html/naturmedicus/web/build/;
+        }
+
+        location /v2/build/ {
+            autoindex off;
+            alias /var/www/html/naturmedicus/web/build/;
+        }
+
+        location /v2/files/ {
+            autoindex off;
+            alias /var/www/html/naturmedicus/web/files/;
+        }
+
         location /v2/ {
                 alias /var/www/html/naturmedicus/web;
-                index app.php;
-                rewrite ^(.*)$ /app.php/$1 last;
-                return 403;
+                try_files $uri /app_dev.php$is_args$args;
+#                index app_dev.php;
+#                rewrite ^(.*)$ /app_dev.php/$1 last;
+#                return 403;
         }
+
 
         # DEV
         # This rule should only be placed on your development environment
